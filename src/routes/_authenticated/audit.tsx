@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/audit")({
 function AuditPage() {
   const { data = [] } = useQuery({
     queryKey: ["audit"],
-    queryFn: async () => (await supabase.from("audit_log").select("*, profiles:user_id(full_name)").order("created_at", { ascending: false }).limit(500)).data ?? [],
+    queryFn: async () => (await supabase.from("audit_log").select("*").order("created_at", { ascending: false }).limit(500)).data ?? [],
   });
 
   return (
@@ -28,7 +28,7 @@ function AuditPage() {
             {data.map((a) => (
               <tr key={a.id} className="border-t">
                 <td className="py-3 px-4 text-xs">{formatDateTime(a.created_at)}</td>
-                <td className="py-3 px-4">{(a as { profiles?: { full_name: string } }).profiles?.full_name ?? "—"}</td>
+                <td className="py-3 px-4 font-mono text-xs">{a.user_id?.slice(0, 8) ?? "—"}</td>
                 <td className="py-3 px-4"><Badge variant="outline">{a.action}</Badge></td>
                 <td className="py-3 px-4">{a.entity}</td>
                 <td className="py-3 px-4 text-xs font-mono text-muted-foreground">{a.details ? JSON.stringify(a.details) : ""}</td>
