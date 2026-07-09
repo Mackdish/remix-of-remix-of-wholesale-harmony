@@ -141,7 +141,7 @@ export const getMyRoles = createServerFn({ method: "GET" })
 /** Stock adjustment */
 export const createStockAdjustment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { product_id: string; quantity: number; movement_type: string; notes?: string; unit_cost?: number }) => d)
+  .inputValidator((d: { product_id: string; quantity: number; movement_type: "adjustment" | "damage" | "expiry" | "opening" | "return_in" | "return_out" | "transfer"; notes?: string; unit_cost?: number }) => d)
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("stock_movements").insert({
       product_id: data.product_id,
