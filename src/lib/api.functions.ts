@@ -180,7 +180,7 @@ export const startStockTake = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { name?: string }) => d ?? {})
   .handler(async ({ data, context }) => {
-    const { data: id, error } = await context.supabase.rpc("start_stock_take", { _name: data.name ?? null });
+    const { data: id, error } = await context.supabase.rpc("start_stock_take", { _name: data.name ?? undefined });
     if (error) throw new Error(error.message);
     return { id: id as string };
   });
