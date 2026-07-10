@@ -155,3 +155,63 @@ export const createStockAdjustment = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+/** Process customer return */
+export const processSalesReturn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: {
+    items: Array<{ product_id: string; quantity: number; unit_price: number }>;
+    sale_id?: string | null;
+    customer_id?: string | null;
+    tax?: number;
+    refund_method: string;
+    refund_amount: number;
+    restock: boolean;
+    notes?: string;
+  }) => d)
+  .handler(async ({ data, context }) => {
+    const { data: id, error } = await context.supabase.rpc("process_sales_return", { payload: data });
+    if (error) throw new Error(error.message);
+    return { id: id as string };
+  });
+
+/** Start stock take session */
+export const startStockTake = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { name?: string }) => d ?? {})
+  .handler(async ({ data, context }) => {
+    const { data: id, error } = await context.supabase.rpc("start_stock_take", { _name: data.name ?? undefined });
+    if (error) throw new Error(error.message);
+    return { id: id as string };
+  });
+
+/** Approve stock take */
+export const approveStockTake = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { session_id: string }) => d)
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.rpc("approve_stock_take", { _session_id: data.session_id });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** P&L report */
+export const getPnlReport = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { from: string; to: string }) => d)
+  .handler(async ({ data, context }) => {
+    const { data: r, error } = await context.supabase.rpc("pnl_report", { _from: data.from, _to: data.to });
+    if (error) throw new Error(error.message);
+    return r as Record<string, number | string>;
+  });
+
+/** VAT report */
+export const getVatReport = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { from: string; to: string }) => d)
+  .handler(async ({ data, context }) => {
+    const { data: r, error } = await context.supabase.rpc("vat_report", { _from: data.from, _to: data.to });
+    if (error) throw new Error(error.message);
+    return r as Record<string, number | string>;
+  });
+

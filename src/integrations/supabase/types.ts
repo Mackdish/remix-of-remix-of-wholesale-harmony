@@ -569,6 +569,126 @@ export type Database = {
           },
         ]
       }
+      sales_return_items: {
+        Row: {
+          created_at: string
+          id: string
+          line_total: number
+          product_id: string
+          product_name: string
+          quantity: number
+          return_id: string
+          unit_cost: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          line_total: number
+          product_id: string
+          product_name: string
+          quantity: number
+          return_id: string
+          unit_cost?: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          line_total?: number
+          product_id?: string
+          product_name?: string
+          quantity?: number
+          return_id?: string
+          unit_cost?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_return_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_return_items_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "sales_returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales_returns: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          customer_id: string | null
+          id: string
+          notes: string | null
+          refund_amount: number
+          refund_method: Database["public"]["Enums"]["payment_method"]
+          restock: boolean
+          return_date: string
+          return_no: string
+          sale_id: string | null
+          subtotal: number
+          tax: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          refund_amount?: number
+          refund_method?: Database["public"]["Enums"]["payment_method"]
+          restock?: boolean
+          return_date?: string
+          return_no: string
+          sale_id?: string | null
+          subtotal?: number
+          tax?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          refund_amount?: number
+          refund_method?: Database["public"]["Enums"]["payment_method"]
+          restock?: boolean
+          return_date?: string
+          return_no?: string
+          sale_id?: string | null
+          subtotal?: number
+          tax?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_returns_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_returns_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       settings: {
         Row: {
           address: string | null
@@ -658,6 +778,105 @@ export type Database = {
           },
         ]
       }
+      stock_take_items: {
+        Row: {
+          counted_qty: number | null
+          created_at: string
+          id: string
+          product_id: string
+          product_name: string
+          session_id: string
+          system_qty: number
+          unit: string | null
+          unit_cost: number
+          variance: number | null
+        }
+        Insert: {
+          counted_qty?: number | null
+          created_at?: string
+          id?: string
+          product_id: string
+          product_name: string
+          session_id: string
+          system_qty?: number
+          unit?: string | null
+          unit_cost?: number
+          variance?: number | null
+        }
+        Update: {
+          counted_qty?: number | null
+          created_at?: string
+          id?: string
+          product_id?: string
+          product_name?: string
+          session_id?: string
+          system_qty?: number
+          unit?: string | null
+          unit_cost?: number
+          variance?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_take_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_take_items_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "stock_take_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_take_sessions: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string | null
+          notes: string | null
+          session_no: string
+          started_at: string
+          status: Database["public"]["Enums"]["stock_take_status"]
+          submitted_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string | null
+          notes?: string | null
+          session_no: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["stock_take_status"]
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string | null
+          notes?: string | null
+          session_no?: string
+          started_at?: string
+          status?: Database["public"]["Enums"]["stock_take_status"]
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       suppliers: {
         Row: {
           address: string | null
@@ -729,6 +948,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_stock_take: { Args: { _session_id: string }; Returns: undefined }
       current_user_roles: {
         Args: never
         Returns: Database["public"]["Enums"]["app_role"][]
@@ -741,8 +961,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      pnl_report: { Args: { _from: string; _to: string }; Returns: Json }
       process_purchase: { Args: { payload: Json }; Returns: string }
       process_sale: { Args: { payload: Json }; Returns: string }
+      process_sales_return: { Args: { payload: Json }; Returns: string }
+      start_stock_take: { Args: { _name?: string }; Returns: string }
+      vat_report: { Args: { _from: string; _to: string }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "manager" | "cashier" | "storekeeper" | "accountant"
@@ -759,6 +983,12 @@ export type Database = {
         | "opening"
       payment_method: "cash" | "mpesa" | "bank" | "cheque" | "credit" | "mixed"
       sale_status: "completed" | "void" | "pending"
+      stock_take_status:
+        | "draft"
+        | "counting"
+        | "submitted"
+        | "approved"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -901,6 +1131,13 @@ export const Constants = {
       ],
       payment_method: ["cash", "mpesa", "bank", "cheque", "credit", "mixed"],
       sale_status: ["completed", "void", "pending"],
+      stock_take_status: [
+        "draft",
+        "counting",
+        "submitted",
+        "approved",
+        "cancelled",
+      ],
     },
   },
 } as const
