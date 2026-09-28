@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { formatMoney, formatDateTime } from "@/lib/format";
 
@@ -32,6 +32,8 @@ function ReturnsPage() {
   const [refundAmount, setRefundAmount] = useState(0);
   const [restock, setRestock] = useState(true);
   const [notes, setNotes] = useState("");
+  const [reason, setReason] = useState("");
+  const navigate = useNavigate();
   const [lines, setLines] = useState<Line[]>([]);
 
   const { data: returns = [] } = useQuery({
@@ -77,13 +79,15 @@ function ReturnsPage() {
       refund_method: refundMethod,
       refund_amount: Number(refundAmount) || 0,
       restock,
+      reason,
       notes,
     } }),
-    onSuccess: () => {
+    onSuccess: (res) => {
       toast.success("Return processed");
       qc.invalidateQueries({ queryKey: ["returns"] });
       qc.invalidateQueries({ queryKey: ["products"] });
-      setOpen(false); setLines([]); setSaleId(""); setCustomerId(""); setRefundAmount(0); setNotes("");
+      setOpen(false); setLines([]); setSaleId(""); setCustomerId(""); setRefundAmount(0); setNotes(""); setReason("");
+      navigate({ to: "/return-receipt/$id", params: { id: res.id } });
     },
     onError: (e) => toast.error((e as Error).message),
   });
@@ -100,8 +104,10 @@ function ReturnsPage() {
             <th className="py-3 px-4">Date</th>
             <th className="py-3 px-4">Original sale</th>
             <th className="py-3 px-4">Customer</th>
+            <th className="py-3 px-4">Reason</th>
             <th className="py-3 px-4">Refund</th>
             <th className="py-3 px-4 text-right">Total</th>
+            <th className="py-3 px-4"></th>
           </tr></thead>
           <tbody>
             {returns.map((r) => (
@@ -110,11 +116,15 @@ function ReturnsPage() {
                 <td className="py-3 px-4">{formatDateTime(r.return_date)}</td>
                 <td className="py-3 px-4 font-mono text-xs">{(r.sales as { receipt_no?: string } | null)?.receipt_no ?? "—"}</td>
                 <td className="py-3 px-4">{(r.customers as { name?: string } | null)?.name ?? "Walk-in"}</td>
+                <td className="py-3 px-4" title={r.notes ?? ""}>{r.reason ?? "—"}</td>
                 <td className="py-3 px-4 capitalize">{r.refund_method} · {formatMoney(r.refund_amount)}</td>
                 <td className="py-3 px-4 text-right font-medium">{formatMoney(r.total)}</td>
+                <td className="py-3 px-4 text-right">
+                  <Link to="/return-receipt/$id" params={{ id: r.id }}><Button size="sm" variant="ghost"><Printer className="h-4 w-4" /></Button></Link>
+                </td>
               </tr>
             ))}
-            {returns.length === 0 && <tr><td colSpan={6} className="py-10 text-center text-muted-foreground">No returns yet.</td></tr>}
+            {returns.length === 0 && <tr><td colSpan={8} className="py-10 text-center text-muted-foreground">No returns yet.</td></tr>}
           </tbody>
         </table>
       </Card>
@@ -184,7 +194,16 @@ function ReturnsPage() {
             <label className="flex items-center gap-2 h-10 mt-6"><Checkbox checked={restock} onCheckedChange={(v) => setRestock(!!v)} /> Restock items</label>
             <div className="text-right"><div className="text-xs text-muted-foreground uppercase">Return total</div><div className="text-2xl font-semibold">{formatMoney(total)}</div></div>
           </div>
-          <Textarea placeholder="Notes / reason" value={notes} onChange={(e) => setNotes(e.target.value)} />
+          <div>
+            <Label>Reason for return</Label>
+            <Select value={reason} onValueChange={setReason}>
+              <SelectTrigger><SelectValue placeholder="Select a reason" /></SelectTrigger>
+              <SelectContent>
+                {["Damaged","Expired","Wrong item","Not as described","Customer changed mind","Excess quantity","Other"].map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div><Label>Notes</Label><Textarea placeholder="Additional details" value={notes} onChange={(e) => setNotes(e.target.value)} /></div>
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
             <Button disabled={submit.isPending || lines.length === 0} onClick={() => submit.mutate()}>{submit.isPending ? "Processing…" : "Process return"}</Button>

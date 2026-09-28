@@ -18,6 +18,7 @@ import { Route as AuthenticatedStockRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSalesRouteImport } from './routes/_authenticated/sales'
 import { Route as AuthenticatedReturnsRouteImport } from './routes/_authenticated/returns'
+import { Route as AuthenticatedReportsHistoryRouteImport } from './routes/_authenticated/reports-history'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedPurchasesRouteImport } from './routes/_authenticated/purchases'
 import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
@@ -27,6 +28,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
 import { Route as AuthenticatedCategoriesRouteImport } from './routes/_authenticated/categories'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
+import { Route as AuthenticatedReturnReceiptIdRouteImport } from './routes/_authenticated/return-receipt.$id'
 import { Route as AuthenticatedReceiptIdRouteImport } from './routes/_authenticated/receipt.$id'
 
 const AuthRoute = AuthRouteImport.update({
@@ -73,6 +75,12 @@ const AuthenticatedReturnsRoute = AuthenticatedReturnsRouteImport.update({
   path: '/returns',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReportsHistoryRoute =
+  AuthenticatedReportsHistoryRouteImport.update({
+    id: '/reports-history',
+    path: '/reports-history',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -118,6 +126,12 @@ const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReturnReceiptIdRoute =
+  AuthenticatedReturnReceiptIdRouteImport.update({
+    id: '/return-receipt/$id',
+    path: '/return-receipt/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReceiptIdRoute = AuthenticatedReceiptIdRouteImport.update({
   id: '/receipt/$id',
   path: '/receipt/$id',
@@ -136,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/products': typeof AuthenticatedProductsRoute
   '/purchases': typeof AuthenticatedPurchasesRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/reports-history': typeof AuthenticatedReportsHistoryRoute
   '/returns': typeof AuthenticatedReturnsRoute
   '/sales': typeof AuthenticatedSalesRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -143,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/stock-take': typeof AuthenticatedStockTakeRoute
   '/suppliers': typeof AuthenticatedSuppliersRoute
   '/receipt/$id': typeof AuthenticatedReceiptIdRoute
+  '/return-receipt/$id': typeof AuthenticatedReturnReceiptIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -156,6 +172,7 @@ export interface FileRoutesByTo {
   '/products': typeof AuthenticatedProductsRoute
   '/purchases': typeof AuthenticatedPurchasesRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/reports-history': typeof AuthenticatedReportsHistoryRoute
   '/returns': typeof AuthenticatedReturnsRoute
   '/sales': typeof AuthenticatedSalesRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -163,6 +180,7 @@ export interface FileRoutesByTo {
   '/stock-take': typeof AuthenticatedStockTakeRoute
   '/suppliers': typeof AuthenticatedSuppliersRoute
   '/receipt/$id': typeof AuthenticatedReceiptIdRoute
+  '/return-receipt/$id': typeof AuthenticatedReturnReceiptIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -178,6 +196,7 @@ export interface FileRoutesById {
   '/_authenticated/products': typeof AuthenticatedProductsRoute
   '/_authenticated/purchases': typeof AuthenticatedPurchasesRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/reports-history': typeof AuthenticatedReportsHistoryRoute
   '/_authenticated/returns': typeof AuthenticatedReturnsRoute
   '/_authenticated/sales': typeof AuthenticatedSalesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -185,6 +204,7 @@ export interface FileRoutesById {
   '/_authenticated/stock-take': typeof AuthenticatedStockTakeRoute
   '/_authenticated/suppliers': typeof AuthenticatedSuppliersRoute
   '/_authenticated/receipt/$id': typeof AuthenticatedReceiptIdRoute
+  '/_authenticated/return-receipt/$id': typeof AuthenticatedReturnReceiptIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -200,6 +220,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/purchases'
     | '/reports'
+    | '/reports-history'
     | '/returns'
     | '/sales'
     | '/settings'
@@ -207,6 +228,7 @@ export interface FileRouteTypes {
     | '/stock-take'
     | '/suppliers'
     | '/receipt/$id'
+    | '/return-receipt/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -220,6 +242,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/purchases'
     | '/reports'
+    | '/reports-history'
     | '/returns'
     | '/sales'
     | '/settings'
@@ -227,6 +250,7 @@ export interface FileRouteTypes {
     | '/stock-take'
     | '/suppliers'
     | '/receipt/$id'
+    | '/return-receipt/$id'
   id:
     | '__root__'
     | '/'
@@ -241,6 +265,7 @@ export interface FileRouteTypes {
     | '/_authenticated/products'
     | '/_authenticated/purchases'
     | '/_authenticated/reports'
+    | '/_authenticated/reports-history'
     | '/_authenticated/returns'
     | '/_authenticated/sales'
     | '/_authenticated/settings'
@@ -248,6 +273,7 @@ export interface FileRouteTypes {
     | '/_authenticated/stock-take'
     | '/_authenticated/suppliers'
     | '/_authenticated/receipt/$id'
+    | '/_authenticated/return-receipt/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -321,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReturnsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reports-history': {
+      id: '/_authenticated/reports-history'
+      path: '/reports-history'
+      fullPath: '/reports-history'
+      preLoaderRoute: typeof AuthenticatedReportsHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/reports': {
       id: '/_authenticated/reports'
       path: '/reports'
@@ -384,6 +417,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/return-receipt/$id': {
+      id: '/_authenticated/return-receipt/$id'
+      path: '/return-receipt/$id'
+      fullPath: '/return-receipt/$id'
+      preLoaderRoute: typeof AuthenticatedReturnReceiptIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/receipt/$id': {
       id: '/_authenticated/receipt/$id'
       path: '/receipt/$id'
@@ -404,6 +444,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProductsRoute: typeof AuthenticatedProductsRoute
   AuthenticatedPurchasesRoute: typeof AuthenticatedPurchasesRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
+  AuthenticatedReportsHistoryRoute: typeof AuthenticatedReportsHistoryRoute
   AuthenticatedReturnsRoute: typeof AuthenticatedReturnsRoute
   AuthenticatedSalesRoute: typeof AuthenticatedSalesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -411,6 +452,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedStockTakeRoute: typeof AuthenticatedStockTakeRoute
   AuthenticatedSuppliersRoute: typeof AuthenticatedSuppliersRoute
   AuthenticatedReceiptIdRoute: typeof AuthenticatedReceiptIdRoute
+  AuthenticatedReturnReceiptIdRoute: typeof AuthenticatedReturnReceiptIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -423,6 +465,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProductsRoute: AuthenticatedProductsRoute,
   AuthenticatedPurchasesRoute: AuthenticatedPurchasesRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
+  AuthenticatedReportsHistoryRoute: AuthenticatedReportsHistoryRoute,
   AuthenticatedReturnsRoute: AuthenticatedReturnsRoute,
   AuthenticatedSalesRoute: AuthenticatedSalesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
@@ -430,6 +473,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedStockTakeRoute: AuthenticatedStockTakeRoute,
   AuthenticatedSuppliersRoute: AuthenticatedSuppliersRoute,
   AuthenticatedReceiptIdRoute: AuthenticatedReceiptIdRoute,
+  AuthenticatedReturnReceiptIdRoute: AuthenticatedReturnReceiptIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
