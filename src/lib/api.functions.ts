@@ -167,10 +167,34 @@ export const processSalesReturn = createServerFn({ method: "POST" })
     refund_method: string;
     refund_amount: number;
     restock: boolean;
+    reason?: string;
     notes?: string;
   }) => d)
   .handler(async ({ data, context }) => {
     const { data: id, error } = await context.supabase.rpc("process_sales_return", { payload: data });
+    if (error) throw new Error(error.message);
+    return { id: id as string };
+  });
+
+/** Return with items for printable receipt */
+export const getReturnWithItems = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => d)
+  .handler(async ({ data, context }) => {
+    const [{ data: ret }, { data: items }, { data: settings }] = await Promise.all([
+      context.supabase.from("sales_returns").select("*, customers(name,phone), sales(receipt_no)").eq("id", data.id).single(),
+      context.supabase.from("sales_return_items").select("*").eq("return_id", data.id),
+      context.supabase.from("settings").select("*").eq("id", 1).single(),
+    ]);
+    return { ret, items: items ?? [], settings };
+  });
+
+/** Generate (or regenerate) a daily report snapshot now */
+export const generateDailyReportNow = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { date: string }) => d)
+  .handler(async ({ data, context }) => {
+    const { data: id, error } = await context.supabase.rpc("generate_daily_report_now", { _date: data.date });
     if (error) throw new Error(error.message);
     return { id: id as string };
   });
