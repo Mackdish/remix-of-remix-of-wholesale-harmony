@@ -444,6 +444,33 @@ export type Database = {
           },
         ]
       }
+      report_snapshots: {
+        Row: {
+          created_at: string
+          data: Json
+          generated_by: string
+          id: string
+          report_date: string
+          report_type: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          generated_by?: string
+          id?: string
+          report_date: string
+          report_type?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          generated_by?: string
+          id?: string
+          report_date?: string
+          report_type?: string
+        }
+        Relationships: []
+      }
       sale_items: {
         Row: {
           discount: number
@@ -627,6 +654,7 @@ export type Database = {
           customer_id: string | null
           id: string
           notes: string | null
+          reason: string | null
           refund_amount: number
           refund_method: Database["public"]["Enums"]["payment_method"]
           restock: boolean
@@ -644,6 +672,7 @@ export type Database = {
           customer_id?: string | null
           id?: string
           notes?: string | null
+          reason?: string | null
           refund_amount?: number
           refund_method?: Database["public"]["Enums"]["payment_method"]
           restock?: boolean
@@ -661,6 +690,7 @@ export type Database = {
           customer_id?: string | null
           id?: string
           notes?: string | null
+          reason?: string | null
           refund_amount?: number
           refund_method?: Database["public"]["Enums"]["payment_method"]
           restock?: boolean
@@ -949,11 +979,16 @@ export type Database = {
     }
     Functions: {
       approve_stock_take: { Args: { _session_id: string }; Returns: undefined }
+      build_daily_report: {
+        Args: { _by?: string; _date: string }
+        Returns: string
+      }
       current_user_roles: {
         Args: never
         Returns: Database["public"]["Enums"]["app_role"][]
       }
       dashboard_stats: { Args: never; Returns: Json }
+      generate_daily_report_now: { Args: { _date: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
