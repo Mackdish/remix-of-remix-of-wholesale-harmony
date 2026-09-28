@@ -138,7 +138,10 @@ function ReportsPage() {
   });
 
   // ---- PDF exports
-  function downloadDailyPdf() {
+  async function downloadDailyPdf() {
+    const { data: dayReturns } = await supabase.from("sales_returns")
+      .select("return_no,return_date,reason,notes,total,refund_amount")
+      .gte("return_date", `${dayDate}T00:00:00`).lte("return_date", `${dayDate}T23:59:59.999`).order("return_date");
     const doc = buildReportPdf({
       business: businessName, title: "Daily Sales Report", from: dayDate, to: dayDate,
       summary: [
@@ -148,6 +151,7 @@ function ReportsPage() {
         { label: "Tax", value: formatMoney(dailyTotals.tax) },
         { label: "COGS", value: formatMoney(dailyTotals.cogs) },
         { label: "Gross profit", value: formatMoney(dailyTotals.profit) },
+        { label: "Customer returns", value: formatMoney((dayReturns ?? []).reduce((s, r) => s + Number(r.total), 0)) },
       ],
       columns: [
         { header: "Time", key: "time" },
@@ -165,6 +169,14 @@ function ReportsPage() {
         total: Number(r.total),
         profit: Number(r.profit),
       })),
+      sections: [{
+        title: "Customer returns",
+        columns: [
+          { header: "Return #", key: "return_no" }, { header: "Reason", key: "reason" },
+          { header: "Notes", key: "notes" }, { header: "Total", key: "total", money: true },
+        ],
+        rows: (dayReturns ?? []).map((r) => ({ return_no: r.return_no, reason: r.reason ?? "", notes: r.notes ?? "", total: Number(r.total) })),
+      }],
     });
     savePdf(doc, `daily-sales-${dayDate}.pdf`);
   }

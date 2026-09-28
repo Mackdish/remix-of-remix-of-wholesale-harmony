@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, ShoppingCart, Package, Tags, Truck, Users, ClipboardList, ArrowLeftRight, Wallet, Receipt, BarChart3, Settings, LogOut, Store, ScrollText, Undo2, ClipboardCheck } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Package, Tags, Truck, Users, ClipboardList, ArrowLeftRight, Wallet, Receipt, BarChart3, Settings, LogOut, Store, ScrollText, Undo2, ClipboardCheck, FileClock } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/hooks/use-session";
@@ -20,6 +20,7 @@ const nav = [
   { to: "/suppliers", label: "Suppliers", icon: Truck },
   { to: "/expenses", label: "Expenses", icon: Wallet },
   { to: "/reports", label: "Reports", icon: BarChart3 },
+  { to: "/reports-history", label: "Report History", icon: FileClock },
   { to: "/audit", label: "Audit Log", icon: ScrollText },
   { to: "/settings", label: "Settings", icon: Settings },
 ];

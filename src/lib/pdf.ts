@@ -14,6 +14,7 @@ export function buildReportPdf(opts: {
   columns?: PdfColumn[];
   rows?: Array<Record<string, unknown>>;
   footNote?: string;
+  sections?: Array<{ title: string; columns: PdfColumn[]; rows: Array<Record<string, unknown>> }>;
 }) {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -54,6 +55,27 @@ export function buildReportPdf(opts: {
         if (c.money) return formatMoney(v as number);
         return v == null ? "" : String(v);
       })),
+      styles: { fontSize: 9, cellPadding: 5 },
+      headStyles: { fillColor: [30, 41, 59], textColor: 255 },
+      columnStyles: Object.fromEntries(cols.map((c, i) => [i, { halign: c.align ?? (c.money ? "right" : "left") }])) as UserOptions["columnStyles"],
+      margin: { left: 40, right: 40 },
+    });
+  }
+
+  for (const section of opts.sections ?? []) {
+    // @ts-expect-error lastAutoTable added by plugin
+    let y = (doc.lastAutoTable?.finalY ?? cursorY) + 24;
+    if (y > doc.internal.pageSize.getHeight() - 80) { doc.addPage(); y = 50; }
+    doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(0);
+    doc.text(section.title, 40, y);
+    doc.setFont("helvetica", "normal");
+    const cols = section.columns;
+    autoTable(doc, {
+      startY: y + 8,
+      head: [cols.map((c) => c.header)],
+      body: section.rows.length
+        ? section.rows.map((r) => cols.map((c) => { const v = r[c.key]; return c.money ? formatMoney(v as number) : v == null ? "" : String(v); }))
+        : [[{ content: "None", colSpan: cols.length, styles: { halign: "center", textColor: 150 } }]],
       styles: { fontSize: 9, cellPadding: 5 },
       headStyles: { fillColor: [30, 41, 59], textColor: 255 },
       columnStyles: Object.fromEntries(cols.map((c, i) => [i, { halign: c.align ?? (c.money ? "right" : "left") }])) as UserOptions["columnStyles"],
