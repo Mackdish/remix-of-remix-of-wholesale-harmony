@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { useSession } from "@/hooks/use-session";
 import { signOut } from "@/lib/format";
 import { Button } from "@/components/ui/button";
+import { InstallAppButton } from "@/components/install-app-button";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -63,6 +64,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
         <div className="border-t border-sidebar-border p-3">
+          <InstallAppButton className="mb-2 w-full justify-start bg-transparent text-sidebar-foreground/80 border-sidebar-border hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
           <div className="mb-2 px-2 text-xs text-sidebar-foreground/70 truncate">{user?.email}</div>
           <Button
             variant="ghost"
