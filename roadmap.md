@@ -1,0 +1,1 @@
+- [ ] Enable deleting data (scope pending user answer)
