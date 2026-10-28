@@ -150,14 +150,14 @@ function AiInsightsPage() {
       const products = data ?? [];
       const low = products.filter((p) => Number(p.stock_qty) > 0 && Number(p.stock_qty) <= Number(p.min_stock));
       const out = products.filter((p) => Number(p.stock_qty) <= 0);
-      const value = (p: (typeof products)[number], price: "buying_price" | "selling_price") =>
+      const value = (price: "buying_price" | "selling_price") =>
         products.reduce((s, q) => s + Number(q.stock_qty) * Number(q[price]), 0);
       return {
         snapshot_date: date,
         currency: "KES",
         product_count: products.length,
-        total_stock_cost_value: value(products, "buying_price"),
-        total_stock_retail_value: value(products, "selling_price"),
+        total_stock_cost_value: value("buying_price"),
+        total_stock_retail_value: value("selling_price"),
         low_stock: low.map((p) => ({ code: p.code, name: p.name, stock: Number(p.stock_qty), min: Number(p.min_stock) })),
         out_of_stock: out.map((p) => ({ code: p.code, name: p.name })),
         top_products_by_stock_value: [...products]
