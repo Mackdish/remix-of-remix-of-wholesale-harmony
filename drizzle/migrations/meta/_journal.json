@@ -15,6 +15,13 @@
       "when": 1793202489780,
       "tag": "0001_admin_manager_delete_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793202500146,
+      "tag": "0002_deletes_only_via_function",
+      "breakpoints": true
     }
   ]
 }
