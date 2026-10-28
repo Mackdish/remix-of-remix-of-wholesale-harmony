@@ -22,6 +22,7 @@ export const Route = createFileRoute("/_authenticated/purchases")({
 });
 
 type Line = { product_id: string; name: string; quantity: number; unit_cost: number };
+const emptyLine = (): Line => ({ product_id: "", name: "", quantity: 1, unit_cost: 0 });
 
 function PurchasesPage() {
   const qc = useQueryClient();
@@ -52,10 +53,12 @@ function PurchasesPage() {
   const process = useServerFn(processPurchase);
   const submit = useMutation({
     mutationFn: async () => {
-      if (lines.length === 0) throw new Error("Add at least one line");
+      const filled = lines.filter((l) => l.product_id);
+      if (filled.length === 0) throw new Error("Choose a product for at least one item before saving.");
+      if (filled.some((l) => !(l.quantity > 0))) throw new Error("Each item needs a quantity greater than 0.");
       await process({
         data: {
-          items: lines.map((l) => ({ product_id: l.product_id, quantity: l.quantity, unit_cost: l.unit_cost })),
+          items: filled.map((l) => ({ product_id: l.product_id, quantity: l.quantity, unit_cost: l.unit_cost })),
           supplier_id: supplierId || null,
           invoice_no: invoiceNo,
           payment_method: paymentMethod,
@@ -76,10 +79,15 @@ function PurchasesPage() {
   const subtotal = lines.reduce((s, l) => s + l.quantity * l.unit_cost, 0);
   const total = subtotal + tax + transport - discount;
 
+  const openNew = () => {
+    setLines((c) => (c.length ? c : [emptyLine()]));
+    setOpen(true);
+  };
+
   return (
     <>
       <PageHeader title="Purchases" description="Record goods received from suppliers."
-        actions={<Button onClick={() => setOpen(true)}><Plus className="h-4 w-4 mr-2" />New purchase</Button>} />
+        actions={<Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />New purchase</Button>} />
 
       <Card className="p-0 overflow-hidden">
         <table className="w-full text-sm">
@@ -120,9 +128,14 @@ function PurchasesPage() {
 
           <div className="space-y-2 mt-2">
             <div className="flex items-center justify-between">
-              <Label>Line items</Label>
-              <Button size="sm" variant="outline" onClick={() => setLines([...lines, { product_id: "", name: "", quantity: 1, unit_cost: 0 }])}><Plus className="h-3 w-3 mr-1" />Add line</Button>
+              <Label>Items received</Label>
+              <Button size="sm" variant="outline" onClick={() => setLines([...lines, emptyLine()])}><Plus className="h-3 w-3 mr-1" />Add item</Button>
             </div>
+            {lines.length === 0 && (
+              <p className="text-sm text-muted-foreground border border-dashed rounded-md p-3 text-center">
+                No items yet. Click “Add item” and choose a product.
+              </p>
+            )}
             {lines.map((l, i) => (
               <div key={i} className="grid grid-cols-12 gap-2 items-end">
                 <div className="col-span-6">
