@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { generateResponse, GatewayError } from "@lovable.dev/ai-gateway";
+import type { Json } from "@/integrations/supabase/types";
 
 const AI_MODEL = "openai/gpt-6-astra";
 
@@ -173,7 +174,7 @@ export const analyzeDailyReport = createServerFn({ method: "POST" })
           sales: data.sales_data ?? {},
           inventory: data.inventory_data ?? {},
           notes: data.notes ?? null,
-        },
+        } as unknown as Json,
         analysis,
         notes: data.notes ?? null,
         created_by: context.userId,
