@@ -8,6 +8,20 @@
       "when": 1793201749210,
       "tag": "0000_restore_access_signup_and_schedule",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793202489780,
+      "tag": "0001_admin_manager_delete_functions",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793202500146,
+      "tag": "0002_deletes_only_via_function",
+      "breakpoints": true
     }
   ]
 }

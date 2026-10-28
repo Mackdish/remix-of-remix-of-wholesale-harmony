@@ -1,1 +1,1 @@
-- [ ] Enable deleting data (scope pending user answer)
+- [x] Enable deleting data (Admin + Manager)

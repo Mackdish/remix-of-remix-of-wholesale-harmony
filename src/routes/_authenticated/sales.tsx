@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime, formatMoney, downloadCSV } from "@/lib/format";
 import { Download, Eye } from "lucide-react";
+import { DeleteButton } from "@/components/delete-button";
 
 export const Route = createFileRoute("/_authenticated/sales")({
   component: SalesPage,
@@ -38,7 +39,8 @@ function SalesPage() {
                 <td className="py-3 px-4 text-right text-success">{formatMoney(r.profit)}</td>
                 <td className="py-3 px-4 text-right">{Number(r.balance_due) > 0 ? formatMoney(r.balance_due) : "—"}</td>
                 <td className="py-3 px-4"><Badge variant={r.status === "completed" ? "default" : "secondary"}>{r.status}</Badge></td>
-                <td className="py-3 px-4 text-right"><Link to="/receipt/$id" params={{ id: r.id }}><Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button></Link></td>
+                <td className="py-3 px-4 text-right whitespace-nowrap"><Link to="/receipt/$id" params={{ id: r.id }}><Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button></Link>
+                  <DeleteButton kind="sale" id={r.id} label={`sale ${r.receipt_no}`} invalidate={[["sales-all"]]} warning="Items go back into stock and any customer balance from this sale is removed. This cannot be undone." /></td>
               </tr>
             ))}
             {data.length === 0 && <tr><td colSpan={9} className="py-10 text-center text-muted-foreground">No sales yet.</td></tr>}

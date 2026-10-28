@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Plus, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { formatMoney } from "@/lib/format";
+import { DeleteButton } from "@/components/delete-button";
 
 export const Route = createFileRoute("/_authenticated/suppliers")({
   component: SuppliersPage,
@@ -55,8 +56,9 @@ function SuppliersPage() {
                 <td className="py-3 px-4">{s.phone || "—"}</td>
                 <td className="py-3 px-4">{s.email || "—"}</td>
                 <td className="py-3 px-4 text-right font-medium">{formatMoney(s.balance)}</td>
-                <td className="py-3 px-4 text-right">
+                <td className="py-3 px-4 text-right whitespace-nowrap">
                   <Button variant="ghost" size="sm" onClick={() => setEditing({ id: s.id, name: s.name, contact_person: s.contact_person ?? "", phone: s.phone ?? "", email: s.email ?? "", address: s.address ?? "", tax_number: s.tax_number ?? "", bank_details: s.bank_details ?? "" })}><Pencil className="h-4 w-4" /></Button>
+                  <DeleteButton kind="supplier" id={s.id} label={s.name} invalidate={[["suppliers"]]} warning="Their past purchases stay, without a supplier name." />
                 </td>
               </tr>
             ))}

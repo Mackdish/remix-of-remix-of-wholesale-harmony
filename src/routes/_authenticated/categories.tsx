@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil } from "lucide-react";
 import { toast } from "sonner";
+import { DeleteButton } from "@/components/delete-button";
 
 export const Route = createFileRoute("/_authenticated/categories")({
   component: CategoriesPage,
@@ -99,6 +100,7 @@ function CategoriesPage() {
                   <Button variant="ghost" size="sm" onClick={() => setEditing({ id: c.id, name: c.name, description: c.description ?? "" })}>
                     <Pencil className="h-4 w-4" />
                   </Button>
+                  <DeleteButton kind="category" id={c.id} label={c.name} invalidate={[["categories"], ["categories-list"]]} warning="Products in this category will be left without a category." />
                 </td>
               </tr>
             ))}

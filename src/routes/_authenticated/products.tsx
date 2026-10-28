@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { Plus, Pencil, Search } from "lucide-react";
 import { toast } from "sonner";
 import { formatMoney, formatQty } from "@/lib/format";
+import { DeleteButton } from "@/components/delete-button";
 
 export const Route = createFileRoute("/_authenticated/products")({
   component: ProductsPage,
@@ -181,6 +182,7 @@ function ProductsPage() {
                         buying_price: Number(p.buying_price), selling_price: Number(p.selling_price), wholesale_price: Number(p.wholesale_price),
                         tax_rate: Number(p.tax_rate), min_stock: Number(p.min_stock), max_stock: Number(p.max_stock), is_active: p.is_active,
                       })}><Pencil className="h-4 w-4" /></Button>
+                      <DeleteButton kind="product" id={p.id} label={p.name} invalidate={[["products"]]} />
                     </td>
                   </tr>
                 );

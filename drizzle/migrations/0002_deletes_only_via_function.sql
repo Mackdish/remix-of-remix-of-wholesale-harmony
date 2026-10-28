@@ -1,0 +1,1 @@
+REVOKE DELETE ON public.products, public.categories, public.customers, public.suppliers, public.expenses, public.purchases, public.sales_returns, public.sales_return_items FROM authenticated;

@@ -1021,6 +1021,10 @@ export type Database = {
         Returns: Database["public"]["Enums"]["app_role"][]
       }
       dashboard_stats: { Args: never; Returns: Json }
+      delete_record: {
+        Args: { _id: string; _kind: string }
+        Returns: undefined
+      }
       generate_daily_report_now: { Args: { _date: string }; Returns: string }
       has_role: {
         Args: {
@@ -1033,6 +1037,7 @@ export type Database = {
       process_purchase: { Args: { payload: Json }; Returns: string }
       process_sale: { Args: { payload: Json }; Returns: string }
       process_sales_return: { Args: { payload: Json }; Returns: string }
+      reset_all_data: { Args: never; Returns: undefined }
       start_stock_take: { Args: { _name?: string }; Returns: string }
       vat_report: { Args: { _from: string; _to: string }; Returns: Json }
     }

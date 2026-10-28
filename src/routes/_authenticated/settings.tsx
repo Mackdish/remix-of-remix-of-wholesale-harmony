@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useCanDelete } from "@/components/delete-button";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   component: SettingsPage,
@@ -27,6 +28,7 @@ type SettingsForm = {
 
 function SettingsPage() {
   const qc = useQueryClient();
+  const canDelete = useCanDelete();
   const { data } = useQuery({
     queryKey: ["settings-page"],
     queryFn: async () => (await supabase.from("settings").select("*").eq("id", 1).single()).data,
@@ -73,6 +75,33 @@ function SettingsPage() {
           <div className="col-span-2 flex justify-end"><Button type="submit" disabled={save.isPending}>Save changes</Button></div>
         </form>
       </Card>
+      {canDelete && <ResetCard />}
     </>
+  );
+}
+
+function ResetCard() {
+  const qc = useQueryClient();
+  const [confirm, setConfirm] = useState("");
+  const reset = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc("reset_all_data");
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries(); setConfirm(""); toast.success("All business data deleted"); },
+    onError: (e) => toast.error((e as Error).message),
+  });
+  return (
+    <Card className="p-6 max-w-2xl mt-6 border-destructive/50">
+      <h2 className="font-semibold text-destructive">Delete all business data</h2>
+      <p className="text-sm text-muted-foreground mt-1">
+        Removes every product, category, customer, supplier, sale, purchase, return, expense, stock take and saved report.
+        User accounts, business settings and the audit log are kept. This cannot be undone.
+      </p>
+      <div className="flex gap-2 mt-4">
+        <Input placeholder='Type "DELETE" to confirm' value={confirm} onChange={(e) => setConfirm(e.target.value)} className="max-w-xs" />
+        <Button variant="destructive" disabled={confirm !== "DELETE" || reset.isPending} onClick={() => reset.mutate()}>Delete everything</Button>
+      </div>
+    </Card>
   );
 }

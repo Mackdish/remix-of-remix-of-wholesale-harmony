@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { formatMoney } from "@/lib/format";
+import { DeleteButton } from "@/components/delete-button";
 
 export const Route = createFileRoute("/_authenticated/customers")({
   component: CustomersPage,
@@ -57,7 +58,8 @@ function CustomersPage() {
                 <td className="py-3 px-4">{c.phone || "—"}</td>
                 <td className="py-3 px-4 text-right">{formatMoney(c.credit_limit)}</td>
                 <td className="py-3 px-4 text-right font-medium">{formatMoney(c.balance)}</td>
-                <td className="py-3 px-4 text-right"><Button variant="ghost" size="sm" onClick={() => setEditing({ id: c.id, name: c.name, business_name: c.business_name ?? "", phone: c.phone ?? "", email: c.email ?? "", address: c.address ?? "", type: c.type, credit_limit: Number(c.credit_limit), discount_pct: Number(c.discount_pct) })}><Pencil className="h-4 w-4" /></Button></td>
+                <td className="py-3 px-4 text-right whitespace-nowrap"><Button variant="ghost" size="sm" onClick={() => setEditing({ id: c.id, name: c.name, business_name: c.business_name ?? "", phone: c.phone ?? "", email: c.email ?? "", address: c.address ?? "", type: c.type, credit_limit: Number(c.credit_limit), discount_pct: Number(c.discount_pct) })}><Pencil className="h-4 w-4" /></Button>
+                  <DeleteButton kind="customer" id={c.id} label={c.name} invalidate={[["customers"]]} warning="Their past sales stay, but will show as walk-in." /></td>
               </tr>
             ))}
             {data.length === 0 && <tr><td colSpan={6} className="py-8 text-center text-muted-foreground">No customers.</td></tr>}
