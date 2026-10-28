@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireAuth } from "@/lib/auth.middleware";
 import { generateResponse, GatewayError } from "@lovable.dev/ai-gateway";
 import type { Json } from "@/integrations/supabase/types";
 
@@ -105,7 +105,7 @@ export type AnalyzeReportInput = {
 };
 
 export const analyzeDailyReport = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: AnalyzeReportInput) => d)
   .handler(async ({ data, context }) => {
     const allowed = new Set(["admin", "manager", "accountant"]);
@@ -195,7 +195,7 @@ export const analyzeDailyReport = createServerFn({ method: "POST" })
   });
 
 export const listReportInsights = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("report_insights")
