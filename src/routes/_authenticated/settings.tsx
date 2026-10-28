@@ -83,6 +83,7 @@ function SettingsPage() {
 function ResetCard() {
   const qc = useQueryClient();
   const [confirm, setConfirm] = useState("");
+  const confirmed = confirm.trim().toUpperCase() === "DELETE";
   const reset = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.rpc("reset_all_data");
@@ -98,10 +99,24 @@ function ResetCard() {
         Removes every product, category, customer, supplier, sale, purchase, return, expense, stock take and saved report.
         User accounts, business settings and the audit log are kept. This cannot be undone.
       </p>
-      <div className="flex gap-2 mt-4">
-        <Input placeholder='Type "DELETE" to confirm' value={confirm} onChange={(e) => setConfirm(e.target.value)} className="max-w-xs" />
-        <Button variant="destructive" disabled={confirm !== "DELETE" || reset.isPending} onClick={() => reset.mutate()}>Delete everything</Button>
+      <div className="flex flex-wrap gap-2 mt-4">
+        <Input
+          placeholder='Type "DELETE" to confirm'
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+          autoCapitalize="characters"
+          autoCorrect="off"
+          autoComplete="off"
+          spellCheck={false}
+          className="max-w-xs"
+        />
+        <Button variant="destructive" disabled={!confirmed || reset.isPending} onClick={() => reset.mutate()}>
+          {reset.isPending ? "Deleting…" : "Delete everything"}
+        </Button>
       </div>
+      <p className="text-xs text-muted-foreground mt-2">
+        {confirmed ? "Ready. Press “Delete everything” to continue." : "Type the word DELETE in the box to unlock the button."}
+      </p>
     </Card>
   );
 }
