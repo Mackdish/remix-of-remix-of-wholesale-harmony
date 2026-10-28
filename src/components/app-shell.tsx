@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, ShoppingCart, Package, Tags, Truck, Users, ClipboardList, ArrowLeftRight, Wallet, Receipt, BarChart3, Settings, LogOut, Store, ScrollText, Undo2, ClipboardCheck, FileClock } from "lucide-react";
+import { LayoutDashboard, ShoppingCart, Package, Tags, Truck, Users, ClipboardList, ArrowLeftRight, Wallet, Receipt, BarChart3, Sparkles, Settings, LogOut, Store, ScrollText, Undo2, ClipboardCheck, FileClock } from "lucide-react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/hooks/use-session";
