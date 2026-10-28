@@ -1,9 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireAuth } from "@/lib/auth.middleware";
 
 /** Dashboard stats */
 export const getDashboardStats = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase.rpc("dashboard_stats");
     if (error) throw new Error(error.message);
@@ -12,7 +12,7 @@ export const getDashboardStats = createServerFn({ method: "GET" })
 
 /** Sales trend for last N days */
 export const getSalesTrend = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: { days?: number }) => d ?? {})
   .handler(async ({ data, context }) => {
     const days = data.days ?? 14;
@@ -44,7 +44,7 @@ export const getSalesTrend = createServerFn({ method: "GET" })
 
 /** Top products by revenue for last 30 days */
 export const getTopProducts = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .handler(async ({ context }) => {
     const since = new Date(Date.now() - 30 * 86400_000).toISOString();
     const { data, error } = await context.supabase
@@ -67,7 +67,7 @@ export const getTopProducts = createServerFn({ method: "GET" })
 
 /** Recent sales */
 export const getRecentSales = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("sales")
@@ -80,7 +80,7 @@ export const getRecentSales = createServerFn({ method: "GET" })
 
 /** Process sale via RPC */
 export const processSale = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: {
     items: Array<{ product_id: string; quantity: number; unit_price: number; discount?: number }>;
     customer_id?: string | null;
@@ -98,7 +98,7 @@ export const processSale = createServerFn({ method: "POST" })
 
 /** Process purchase via RPC */
 export const processPurchase = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: {
     items: Array<{ product_id: string; quantity: number; unit_cost: number }>;
     supplier_id?: string | null;
@@ -118,7 +118,7 @@ export const processPurchase = createServerFn({ method: "POST" })
 
 /** Get sale with items for receipt */
 export const getSaleWithItems = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     const [{ data: sale }, { data: items }, { data: settings }] = await Promise.all([
@@ -131,7 +131,7 @@ export const getSaleWithItems = createServerFn({ method: "GET" })
 
 /** Get current user roles */
 export const getMyRoles = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase.from("user_roles").select("role").eq("user_id", context.userId);
     if (error) throw new Error(error.message);
@@ -140,7 +140,7 @@ export const getMyRoles = createServerFn({ method: "GET" })
 
 /** Stock adjustment */
 export const createStockAdjustment = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: { product_id: string; quantity: number; movement_type: "adjustment" | "damage" | "expiry" | "opening" | "return_in" | "return_out" | "transfer"; notes?: string; unit_cost?: number }) => d)
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("stock_movements").insert({
@@ -158,7 +158,7 @@ export const createStockAdjustment = createServerFn({ method: "POST" })
 
 /** Process customer return */
 export const processSalesReturn = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: {
     items: Array<{ product_id: string; quantity: number; unit_price: number }>;
     sale_id?: string | null;
@@ -178,7 +178,7 @@ export const processSalesReturn = createServerFn({ method: "POST" })
 
 /** Return with items for printable receipt */
 export const getReturnWithItems = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: { id: string }) => d)
   .handler(async ({ data, context }) => {
     const [{ data: ret }, { data: items }, { data: settings }] = await Promise.all([
@@ -191,7 +191,7 @@ export const getReturnWithItems = createServerFn({ method: "GET" })
 
 /** Generate (or regenerate) a daily report snapshot now */
 export const generateDailyReportNow = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: { date: string }) => d)
   .handler(async ({ data, context }) => {
     const { data: id, error } = await context.supabase.rpc("generate_daily_report_now", { _date: data.date });
@@ -201,7 +201,7 @@ export const generateDailyReportNow = createServerFn({ method: "POST" })
 
 /** Start stock take session */
 export const startStockTake = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: { name?: string }) => d ?? {})
   .handler(async ({ data, context }) => {
     const { data: id, error } = await context.supabase.rpc("start_stock_take", { _name: data.name ?? undefined });
@@ -211,7 +211,7 @@ export const startStockTake = createServerFn({ method: "POST" })
 
 /** Approve stock take */
 export const approveStockTake = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: { session_id: string }) => d)
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.rpc("approve_stock_take", { _session_id: data.session_id });
@@ -221,7 +221,7 @@ export const approveStockTake = createServerFn({ method: "POST" })
 
 /** P&L report */
 export const getPnlReport = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: { from: string; to: string }) => d)
   .handler(async ({ data, context }) => {
     const { data: r, error } = await context.supabase.rpc("pnl_report", { _from: data.from, _to: data.to });
@@ -231,7 +231,7 @@ export const getPnlReport = createServerFn({ method: "GET" })
 
 /** VAT report */
 export const getVatReport = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
+  .middleware([requireAuth])
   .inputValidator((d: { from: string; to: string }) => d)
   .handler(async ({ data, context }) => {
     const { data: r, error } = await context.supabase.rpc("vat_report", { _from: data.from, _to: data.to });
