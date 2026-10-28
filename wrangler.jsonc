@@ -1,0 +1,12 @@
+{
+  // Base Cloudflare Worker settings. `vite build` (Nitro, cloudflare-module preset) merges this file
+  // into .output/server/wrangler.json and fills in `main`, `assets` and the compat flags itself,
+  // then writes .wrangler/deploy/config.json so `wrangler deploy` picks up that generated config.
+  // Do NOT set `main` or `assets` here: Nitro overrides them and logs a warning.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "remix-of-remix-of-wholesale-harmony",
+  "compatibility_date": "2026-10-23",
+  "observability": {
+    "enabled": true
+  }
+}
