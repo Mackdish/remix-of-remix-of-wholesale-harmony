@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
+import { DeleteButton } from "@/components/delete-button";
 import { toast } from "sonner";
 import { formatMoney, formatDate } from "@/lib/format";
 
@@ -39,13 +40,6 @@ function ExpensesPage() {
     onError: (e) => toast.error((e as Error).message),
   });
 
-  const del = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("expenses").delete().eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["expenses"] }),
-  });
 
   const total = data.reduce((s, e) => s + Number(e.amount), 0);
 
@@ -66,7 +60,7 @@ function ExpensesPage() {
                 <td className="py-3 px-4 text-muted-foreground">{e.description}</td>
                 <td className="py-3 px-4 capitalize">{e.payment_method}</td>
                 <td className="py-3 px-4 text-right font-medium">{formatMoney(e.amount)}</td>
-                <td className="py-3 px-4 text-right"><Button variant="ghost" size="sm" onClick={() => del.mutate(e.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></td>
+                <td className="py-3 px-4 text-right"><DeleteButton kind="expense" id={e.id} label="this expense" invalidate={[["expenses"]]} /></td>
               </tr>
             ))}
             {data.length === 0 && <tr><td colSpan={6} className="py-8 text-center text-muted-foreground">No expenses.</td></tr>}
