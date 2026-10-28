@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { formatMoney, formatDate } from "@/lib/format";
+import { DeleteButton } from "@/components/delete-button";
 
 export const Route = createFileRoute("/_authenticated/purchases")({
   component: PurchasesPage,
@@ -95,6 +96,7 @@ function PurchasesPage() {
                 <td className="py-3 px-4 capitalize">{p.payment_method}</td>
                 <td className="py-3 px-4 text-right font-medium">{formatMoney(p.total)}</td>
                 <td className="py-3 px-4 text-right">{formatMoney(p.amount_paid)}</td>
+                <td className="py-3 px-4 text-right"><DeleteButton kind="purchase" id={p.id} label={`purchase ${p.purchase_no}`} invalidate={[["purchases"]]} warning="The items are removed from stock and any amount owed to the supplier is cleared. This cannot be undone." /></td>
               </tr>
             ))}
             {list.length === 0 && <tr><td colSpan={7} className="py-10 text-center text-muted-foreground">No purchases yet.</td></tr>}
