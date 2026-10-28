@@ -28,6 +28,7 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
 import { Route as AuthenticatedCategoriesRouteImport } from './routes/_authenticated/categories'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
+import { Route as AuthenticatedAiInsightsRouteImport } from './routes/_authenticated/ai-insights'
 import { Route as AuthenticatedReturnReceiptIdRouteImport } from './routes/_authenticated/return-receipt.$id'
 import { Route as AuthenticatedReceiptIdRouteImport } from './routes/_authenticated/receipt.$id'
 
@@ -126,6 +127,11 @@ const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAiInsightsRoute = AuthenticatedAiInsightsRouteImport.update({
+  id: '/ai-insights',
+  path: '/ai-insights',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedReturnReceiptIdRoute =
   AuthenticatedReturnReceiptIdRouteImport.update({
     id: '/return-receipt/$id',
@@ -141,6 +147,7 @@ const AuthenticatedReceiptIdRoute = AuthenticatedReceiptIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/ai-insights': typeof AuthenticatedAiInsightsRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/categories': typeof AuthenticatedCategoriesRoute
   '/customers': typeof AuthenticatedCustomersRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/ai-insights': typeof AuthenticatedAiInsightsRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/categories': typeof AuthenticatedCategoriesRoute
   '/customers': typeof AuthenticatedCustomersRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/ai-insights': typeof AuthenticatedAiInsightsRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/categories': typeof AuthenticatedCategoriesRoute
   '/_authenticated/customers': typeof AuthenticatedCustomersRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/ai-insights'
     | '/audit'
     | '/categories'
     | '/customers'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/ai-insights'
     | '/audit'
     | '/categories'
     | '/customers'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/ai-insights'
     | '/_authenticated/audit'
     | '/_authenticated/categories'
     | '/_authenticated/customers'
@@ -417,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ai-insights': {
+      id: '/_authenticated/ai-insights'
+      path: '/ai-insights'
+      fullPath: '/ai-insights'
+      preLoaderRoute: typeof AuthenticatedAiInsightsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/return-receipt/$id': {
       id: '/_authenticated/return-receipt/$id'
       path: '/return-receipt/$id'
@@ -435,6 +454,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAiInsightsRoute: typeof AuthenticatedAiInsightsRoute
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedCategoriesRoute: typeof AuthenticatedCategoriesRoute
   AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
@@ -456,6 +476,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAiInsightsRoute: AuthenticatedAiInsightsRoute,
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedCategoriesRoute: AuthenticatedCategoriesRoute,
   AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
