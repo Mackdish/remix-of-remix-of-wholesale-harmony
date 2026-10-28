@@ -444,6 +444,39 @@ export type Database = {
           },
         ]
       }
+      report_insights: {
+        Row: {
+          analysis: Json
+          created_at: string
+          created_by: string
+          id: string
+          input_snapshot: Json
+          model: string
+          notes: string | null
+          report_date: string
+        }
+        Insert: {
+          analysis?: Json
+          created_at?: string
+          created_by: string
+          id?: string
+          input_snapshot?: Json
+          model: string
+          notes?: string | null
+          report_date: string
+        }
+        Update: {
+          analysis?: Json
+          created_at?: string
+          created_by?: string
+          id?: string
+          input_snapshot?: Json
+          model?: string
+          notes?: string | null
+          report_date?: string
+        }
+        Relationships: []
+      }
       report_snapshots: {
         Row: {
           created_at: string
