@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Rules
+- Record deletion goes through the `delete_record` / `reset_all_data` database functions (direct DELETE is revoked from signed-in users) so stock, balances and audit log stay consistent.
