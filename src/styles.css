@@ -25,6 +25,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-muted-foreground: var(--muted-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
@@ -54,7 +55,6 @@
 
 :root {
   --radius: 0.625rem;
-  /* Deep navy + teal accent, professional wholesale ERP */
   --background: oklch(0.985 0.005 240);
   --foreground: oklch(0.2 0.04 250);
   --card: oklch(1 0 0);
@@ -103,26 +103,67 @@
   --popover: oklch(0.2 0.04 250);
   --popover-foreground: oklch(0.95 0.01 240);
   --primary: oklch(0.7 0.14 190);
-  --primary-foreground: oklch(0.15 0.04 250);
+  --primary-foreground: oklch(0.15 0.03 250);
   --secondary: oklch(0.28 0.05 250);
   --secondary-foreground: oklch(0.95 0.01 240);
   --muted: oklch(0.25 0.04 250);
-  --muted-foreground: oklch(0.7 0.02 240);
-  --accent: oklch(0.7 0.14 190);
-  --accent-foreground: oklch(0.15 0.04 250);
+  --muted-foreground: oklch(0.7 0.02 250);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
+  * {
+    box-sizing: border-box;
+    border-color: var(--color-border);
+  }
+  html {
+    min-width: 320px;
+    width: 100%;
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+  }
   body {
+    min-width: 320px;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: clip;
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+  #root, main, main > div, [data-radix-popper-content-wrapper] {
+    min-width: 0;
+    max-width: 100%;
+  }
   h1, h2, h3, h4 { letter-spacing: -0.02em; }
+  img, video, canvas, svg { max-width: 100%; }
+  input, select, textarea, button { max-width: 100%; }
+  input, select, textarea { min-width: 0; }
+  pre, code { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 639px) {
+  /* Keep fixed-width controls and content within the mobile viewport. */
+  main .w-64 { width: 100%; }
+  main [class*="grid-cols-"] { min-width: 0; }
+  main table { min-width: 36rem; }
+  main [role="dialog"] {
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+    overflow-y: auto;
+  }
+  main .flex.items-center.justify-between,
+  main .flex.items-start.justify-between {
+    flex-wrap: wrap;
+  }
+  main button, main [role="button"] { touch-action: manipulation; }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  main table { min-width: 40rem; }
 }
 
 @media print {
